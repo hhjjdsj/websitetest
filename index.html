@@ -2,28 +2,82 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>InsightAI · 正大冷冻食品 · 趋势预测引擎</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-        .glass-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
-        .trend-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); }
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 10px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .message-item:hover { background-color: #f9fafb; }
-        .active-nav { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important; }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: #f8fafc;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 玻璃卡片效果 */
+        .glass-card { 
+            background: rgba(255,255,255,0.9); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.2); 
+        }
+        
+        /* 渐变背景 */
+        .trend-gradient { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+        }
+        
+        /* 悬停效果 */
+        .hover-lift:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); 
+        }
+        
+        /* 自定义滚动条 */
+        .custom-scroll::-webkit-scrollbar { 
+            width: 6px; 
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track { 
+            background: #f1f1f1; 
+            border-radius: 10px; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb { 
+            background: #cbd5e0; 
+            border-radius: 10px; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { 
+            background: #94a3b8; 
+        }
+        
+        /* 消息项悬停 */
+        .message-item:hover { 
+            background-color: #f9fafb; 
+        }
+        
+        /* 激活导航 */
+        .active-nav { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white !important; 
+        }
+        
         /* 动画 */
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        .animate-fadeIn { animation: fadeIn 0.2s ease-out; }
+        .animate-fadeIn { 
+            animation: fadeIn 0.2s ease-out; 
+        }
+        
+        /* 弹窗遮罩 */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -32,18 +86,203 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            padding: 16px;
+        }
+        
+        /* 移动端优化 ================================= */
+        
+        /* 防止内容溢出 */
+        .mobile-safe {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+        
+        /* 表格滚动容器 */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -16px;
+            padding: 0 16px;
+        }
+        
+        .table-responsive table {
+            min-width: 500px;
+        }
+        
+        /* 移动端底部导航激活状态 */
+        .mobile-nav-active {
+            color: #7c3aed;
+        }
+        
+        .mobile-nav-active i {
+            color: #7c3aed;
+        }
+        
+        /* 移动端卡片间距优化 */
+        @media (max-width: 640px) {
+            .grid {
+                gap: 12px;
+            }
+            
+            .p-8 {
+                padding: 16px;
+            }
+            
+            .p-6 {
+                padding: 16px;
+            }
+            
+            .text-3xl {
+                font-size: 1.5rem;
+            }
+            
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+            
+            .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+                margin-left: 0.5rem;
+            }
+            
+            /* 趋势卡片调整 */
+            .trend-gradient {
+                padding: 20px;
+            }
+            
+            /* 通知面板全屏 */
+            #notification-panel {
+                position: fixed !important;
+                top: 0 !important;
+                right: 0 !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+                z-index: 100 !important;
+            }
+            
+            /* 弹窗适配 */
+            .modal-overlay .bg-white {
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+            
+            /* 竞品卡片网格 */
+            .competitor-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+        /* 触摸优化 */
+        button, 
+        a, 
+        .nav-item, 
+        .message-item,
+        [onclick] {
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(124, 58, 237, 0.1);
+        }
+        
+        /* 防止双击缩放 */
+        button, 
+        a {
+            touch-action: manipulation;
+        }
+        
+        /* 移动端搜索面板 */
+        .mobile-search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            z-index: 200;
+            padding: 16px;
+        }
+        
+        /* 安全区域适配 */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .mobile-nav-bar {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+        
+        /* 加载动画 */
+        .thinking-dots div {
+            width: 8px;
+            height: 8px;
+            background: #7c3aed;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.4s infinite ease-in-out both;
+        }
+        
+        .thinking-dots div:nth-child(1) { animation-delay: -0.32s; }
+        .thinking-dots div:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes pulse {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        /* 下拉刷新提示 */
+        .pull-to-refresh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #7c3aed;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            transform: translateY(-100%);
+            transition: transform 0.2s;
+            z-index: 300;
+        }
+        
+        .pull-to-refresh.show {
+            transform: translateY(0);
+        }
+        
+        /* 横屏提示 */
+        .landscape-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #f59e0b;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 12px;
+            z-index: 400;
+        }
+        
+        @media (orientation: landscape) and (max-height: 500px) {
+            .landscape-warning {
+                display: block;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body>
 
-<div id="root" class="flex h-screen"></div>
+<!-- 横屏提示 -->
+<div class="landscape-warning">
+    <i class="fas fa-rotate mr-2"></i>为了更好的体验，请竖屏浏览
+</div>
+
+<div id="root" class="h-screen w-screen overflow-hidden mobile-safe"></div>
 
 <script>
     (function() {
         // ==================== AI预测数据 ====================
         const trendPredictions = {
-            // 当前热点趋势 (实时)
             currentHotTrends: [
                 { trend: "空气炸锅专用半成品", momentum: 92, volume: "18.2K", sentiment: 94 },
                 { trend: "儿童营养早餐系列", momentum: 88, volume: "12.7K", sentiment: 91 },
@@ -52,7 +291,6 @@
                 { trend: "露营便携冷冻食品", momentum: 76, volume: "5.2K", sentiment: 88 },
             ],
             
-            // 未来3个月趋势预测
             futureTrends: [
                 { 
                     trend: "控糖/低GI冷冻主食", 
@@ -88,7 +326,6 @@
                 },
             ],
             
-            // 品牌具体建议
             brandAdvice: [
                 { priority: "P0", category: "产品开发", advice: "立即立项'空气炸锅鸡块2.0'，添加儿童营养元素，预计可提升市场份额8-12%", roi: "高" },
                 { priority: "P1", category: "营销策略", advice: "在小红书/抖音投放'宝妈的一分钟早餐'系列内容，主打正大儿童水饺", roi: "中高" },
@@ -97,7 +334,6 @@
                 { priority: "P2", category: "健康线", advice: "推出'低GI鸡肉水饺'，抢占健康食品货架", roi: "中" },
             ],
 
-            // 竞品追踪数据
             competitorData: [
                 { name: "安井食品", share: "28%", yoy: "+5.2%", hotProduct: "锁鲜装虾滑", weakness: "健康概念弱", strength: "渠道下沉强" },
                 { name: "三全食品", share: "24%", yoy: "+2.1%", hotProduct: "私厨水饺", weakness: "创新速度慢", strength: "品牌认知度高" },
@@ -105,7 +341,6 @@
                 { name: "正大食品", share: "15%", yoy: "+3.8%", hotProduct: "CP鸡块", weakness: "线上声量弱", strength: "全产业链信任" },
             ],
 
-            // 实时监测数据
             monitoringData: {
                 totalMentions: "2.3M",
                 growthRate: "+18.5%",
@@ -118,7 +353,6 @@
                 ]
             },
 
-            // 系统设置选项
             settings: {
                 notifications: true,
                 autoRefresh: true,
@@ -128,7 +362,6 @@
                 lastTraining: "2024-03-06 03:00"
             },
 
-            // AI提醒消息 (邮箱/通知)
             notifications: [
                 { 
                     id: 1,
@@ -178,7 +411,6 @@
             ]
         };
 
-        // 实时评论佐证
         const recentReviews = [
             { platform: '小红书', content: '求推荐！有没有适合空气炸锅的冷冻半成品？', trend: '空气炸锅', time: '15分钟前' },
             { platform: '抖音', content: '给娃做早饭太费时间了，有没有一分钟就能搞定的？', trend: '儿童早餐', time: '32分钟前' },
@@ -189,93 +421,120 @@
         // ==================== 全局状态管理 ====================
         let currentPage = localStorage.getItem('currentPage') || '趋势总览';
         let showNotifications = false;
-        let activeModal = null; // 'retrain' 或 message 对象
+        let activeModal = null;
+        let showMobileMenu = false;
+        let showMobileSearch = false;
+        let isRefreshing = false;
 
         // ==================== 交互函数 ====================
         
-        // 标记单条消息为已读
         function markAsRead(messageId) {
             const message = trendPredictions.notifications.find(n => n.id === messageId);
             if (message) {
                 message.read = true;
-                render(); // 重新渲染
+                render();
             }
         }
 
-        // 标记全部为已读
         function markAllAsRead() {
             trendPredictions.notifications.forEach(n => n.read = true);
             render();
         }
 
-        // 显示重新训练提示
         function showRetrainMessage() {
             activeModal = 'retrain';
             render();
         }
 
-        // 关闭所有弹窗
         function closeModal() {
             activeModal = null;
             render();
         }
 
-        // 查看消息详情
         function viewMessageDetail(message) {
-            // 先标记为已读
             if (!message.read) {
                 message.read = true;
             }
             activeModal = message;
+            showNotifications = false;
             render();
         }
 
-        // 切换页面
         function changePage(page) {
             currentPage = page;
             localStorage.setItem('currentPage', page);
             showNotifications = false;
+            showMobileMenu = false;
             render();
         }
+
+        function toggleMobileMenu() {
+            showMobileMenu = !showMobileMenu;
+            render();
+        }
+
+        function toggleMobileSearch() {
+            showMobileSearch = !showMobileSearch;
+            render();
+        }
+
+        // 模拟下拉刷新
+        function handlePullToRefresh() {
+            if (isRefreshing) return;
+            
+            isRefreshing = true;
+            const refreshEl = document.createElement('div');
+            refreshEl.className = 'pull-to-refresh show';
+            refreshEl.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-2"></i>刷新数据中...';
+            document.body.appendChild(refreshEl);
+            
+            setTimeout(() => {
+                refreshEl.remove();
+                isRefreshing = false;
+                render();
+            }, 1500);
+        }
+
+        // 监听触摸下拉
+        let touchStartY = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            if (window.scrollY === 0 && e.touches[0].clientY - touchStartY > 100 && !isRefreshing) {
+                handlePullToRefresh();
+            }
+        }, { passive: true });
 
         // ==================== 渲染函数 ====================
         function render() {
             const root = document.getElementById('root');
             
-            // 生成未读消息数
             const unreadCount = trendPredictions.notifications.filter(n => !n.read).length;
 
-            // ========== 侧边栏导航 ==========
-            const sidebar = `
-                <div class="w-64 bg-white/90 backdrop-blur-sm shadow-xl flex flex-col h-full border-r border-gray-100">
+            // 桌面侧边栏
+            const desktopSidebar = `
+                <div class="hidden md:flex md:w-64 bg-white/90 backdrop-blur-sm shadow-xl flex-col h-full border-r border-gray-100">
                     <div class="flex items-center justify-center h-20 border-b border-gray-100">
                         <div class="text-center">
                             <span class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">InsightAI</span>
                             <div class="text-xs font-medium text-purple-600 mt-1">趋势预测引擎 · 正大专版</div>
                         </div>
                     </div>
-                    <nav class="flex-1 px-4 py-6 space-y-1" id="sidebar-nav">
-                        <a href="#" data-page="趋势总览" class="nav-item flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl transition-all ${currentPage === '趋势总览' ? 'active-nav' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}">
-                            <i class="fas fa-chart-line w-5 h-5 mr-3"></i>趋势总览
-                        </a>
-                        <a href="#" data-page="数据监测" class="nav-item flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl transition-all ${currentPage === '数据监测' ? 'active-nav' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}">
-                            <i class="fas fa-database w-5 h-5 mr-3"></i>数据监测
-                        </a>
-                        <a href="#" data-page="商业建议" class="nav-item flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl transition-all ${currentPage === '商业建议' ? 'active-nav' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}">
-                            <i class="fas fa-lightbulb w-5 h-5 mr-3"></i>商业建议
-                        </a>
-                        <a href="#" data-page="竞品追踪" class="nav-item flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl transition-all ${currentPage === '竞品追踪' ? 'active-nav' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}">
-                            <i class="fas fa-users w-5 h-5 mr-3"></i>竞品追踪
-                        </a>
-                        <a href="#" data-page="设置" class="nav-item flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl transition-all ${currentPage === '设置' ? 'active-nav' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}">
-                            <i class="fas fa-cog w-5 h-5 mr-3"></i>设置
-                        </a>
+                    <nav class="flex-1 px-4 py-6 space-y-1">
+                        ${['趋势总览', '数据监测', '商业建议', '竞品追踪', '设置'].map(page => `
+                            <a href="#" data-page="${page}" class="nav-item flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl transition-all ${currentPage === page ? 'active-nav' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}">
+                                <i class="fas fa-${page === '趋势总览' ? 'chart-line' : page === '数据监测' ? 'database' : page === '商业建议' ? 'lightbulb' : page === '竞品追踪' ? 'users' : 'cog'} w-5 h-5 mr-3"></i>
+                                ${page}
+                            </a>
+                        `).join('')}
                     </nav>
                     <div class="p-5 border-t border-gray-100">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">姜</div>
-                            <div>
-                                <div class="text-sm font-semibold text-gray-800">姜同泽 · Admin</div>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-sm font-semibold text-gray-800 truncate">姜同泽 · Admin</div>
                                 <div class="text-xs text-gray-400">最后登录: 今日 08:30</div>
                             </div>
                         </div>
@@ -283,30 +542,91 @@
                 </div>
             `;
 
-            // ========== 头部 ==========
+            // 头部导航
             const header = `
-                <div class="bg-white/80 backdrop-blur-sm shadow-sm h-20 flex items-center justify-between px-8 border-b border-gray-100">
-                    <div class="flex items-center space-x-4">
-                        <h1 class="text-xl font-bold text-gray-800" id="page-title">${currentPage}</h1>
-                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">AI预测准确率 92.3%</span>
+                <div class="bg-white/80 backdrop-blur-sm shadow-sm h-16 md:h-20 flex items-center justify-between px-4 md:px-8 border-b border-gray-100">
+                    <div class="flex items-center space-x-2 md:space-x-4 min-w-0">
+                        <button class="md:hidden text-gray-600 w-10 h-10 flex items-center justify-center" id="mobile-menu-btn" onclick="toggleMobileMenu()">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 class="text-lg md:text-xl font-bold text-gray-800 truncate">${currentPage}</h1>
+                        <span class="hidden sm:inline-block px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold whitespace-nowrap">AI预测 92.3%</span>
                     </div>
-                    <div class="flex items-center space-x-6">
-                        <div class="relative">
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <div class="hidden md:block relative">
                             <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" placeholder="搜索趋势、产品、建议..." class="w-80 pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-200">
+                            <input type="text" placeholder="搜索趋势、产品、建议..." class="w-64 lg:w-80 pl-10 pr-4 py-2.5 bg-gray-50 border-0 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-200" id="desktop-search">
                         </div>
-                        <button class="relative" id="notification-btn">
+                        <button class="md:hidden text-gray-600 w-10 h-10 flex items-center justify-center" onclick="toggleMobileSearch()">
+                            <i class="fas fa-search text-xl"></i>
+                        </button>
+                        <button class="relative w-10 h-10 flex items-center justify-center" id="notification-btn">
                             <i class="far fa-bell text-xl text-gray-500"></i>
-                            ${unreadCount > 0 ? `<span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">${unreadCount}</span>` : ''}
+                            ${unreadCount > 0 ? `<span class="absolute top-1 right-1 w-4 h-4 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">${unreadCount}</span>` : ''}
                         </button>
                     </div>
                 </div>
             `;
 
-            // ========== 消息面板 ==========
+            // 移动端菜单
+            const mobileMenu = showMobileMenu ? `
+                <div class="md:hidden fixed inset-0 bg-black/50 z-40" onclick="toggleMobileMenu()">
+                    <div class="absolute left-0 top-0 bottom-0 w-64 bg-white shadow-xl" onclick="event.stopPropagation()">
+                        <div class="flex items-center justify-center h-20 border-b border-gray-100">
+                            <div class="text-center">
+                                <span class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">InsightAI</span>
+                                <div class="text-xs font-medium text-purple-600 mt-1">趋势预测引擎</div>
+                            </div>
+                        </div>
+                        <nav class="px-4 py-6 space-y-1">
+                            ${['趋势总览', '数据监测', '商业建议', '竞品追踪', '设置'].map(page => `
+                                <a href="#" data-page="${page}" class="flex items-center px-4 py-3.5 text-sm font-semibold rounded-xl ${currentPage === page ? 'bg-purple-50 text-purple-600' : 'text-gray-600'}">
+                                    <i class="fas fa-${page === '趋势总览' ? 'chart-line' : page === '数据监测' ? 'database' : page === '商业建议' ? 'lightbulb' : page === '竞品追踪' ? 'users' : 'cog'} w-5 h-5 mr-3"></i>
+                                    ${page}
+                                </a>
+                            `).join('')}
+                        </nav>
+                        <div class="absolute bottom-0 left-0 right-0 p-5 border-t border-gray-100">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">姜</div>
+                                <div>
+                                    <div class="text-sm font-semibold text-gray-800">姜同泽</div>
+                                    <div class="text-xs text-gray-400">Admin</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+
+            // 移动端搜索
+            const mobileSearch = showMobileSearch ? `
+                <div class="md:hidden fixed inset-0 bg-white z-40 p-4">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <button onclick="toggleMobileSearch()" class="w-10 h-10 flex items-center justify-center">
+                            <i class="fas fa-arrow-left text-xl"></i>
+                        </button>
+                        <div class="flex-1 relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="搜索趋势、产品、建议..." class="w-full pl-10 pr-4 py-3 bg-gray-50 border-0 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-purple-200" id="mobile-search-input" autofocus>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="text-sm font-semibold text-gray-400 mb-2">热门搜索</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-sm">空气炸锅</span>
+                            <span class="px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-sm">儿童早餐</span>
+                            <span class="px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-sm">低脂</span>
+                            <span class="px-3 py-2 bg-purple-50 text-purple-600 rounded-xl text-sm">水饺</span>
+                        </div>
+                    </div>
+                </div>
+            ` : '';
+
+            // 通知面板
             const notificationPanel = showNotifications ? `
-                <div class="absolute top-20 right-8 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50" id="notification-panel">
-                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
+                <div class="fixed md:absolute top-16 md:top-20 right-0 left-0 md:left-auto md:right-8 md:w-96 bg-white shadow-2xl border-t md:border border-gray-100 z-50 md:rounded-2xl max-h-[calc(100vh-80px)] overflow-hidden">
+                    <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-white">
                         <h3 class="font-semibold text-gray-900">AI实时提醒 · 邮箱</h3>
                         <div class="flex items-center space-x-3">
                             <span class="text-xs text-gray-400">${unreadCount}条未读</span>
@@ -317,7 +637,7 @@
                             ` : ''}
                         </div>
                     </div>
-                    <div class="max-h-96 overflow-y-auto custom-scroll">
+                    <div class="max-h-[calc(100vh-160px)] overflow-y-auto custom-scroll bg-white">
                         ${trendPredictions.notifications.map(n => `
                             <div class="message-item p-4 border-b border-gray-50 hover:bg-gray-50 transition-all ${!n.read ? 'bg-blue-50/30' : ''}" 
                                  onclick="viewMessageDetail(${JSON.stringify(n).replace(/"/g, '&quot;')})"
@@ -330,42 +650,37 @@
                                           n.type === 'report' ? '<i class="fas fa-file-alt text-blue-500"></i>' :
                                           '<i class="fas fa-cog text-gray-500"></i>'}
                                     </div>
-                                    <div class="flex-1">
+                                    <div class="flex-1 min-w-0">
                                         <div class="flex justify-between items-start">
-                                            <span class="text-sm font-semibold text-gray-900">${n.title}</span>
-                                            <span class="text-xs text-gray-400">${n.time}</span>
+                                            <span class="text-sm font-semibold text-gray-900 truncate">${n.title}</span>
+                                            <span class="text-xs text-gray-400 whitespace-nowrap ml-2">${n.time}</span>
                                         </div>
-                                        <p class="text-sm text-gray-600 mt-1">${n.content.substring(0, 40)}${n.content.length > 40 ? '...' : ''}</p>
+                                        <p class="text-sm text-gray-600 mt-1 line-clamp-2">${n.content}</p>
                                         ${n.actionable ? '<span class="mt-2 inline-block text-xs text-purple-600 font-medium">点击查看详情 →</span>' : ''}
                                     </div>
-                                    ${!n.read ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}
+                                    ${!n.read ? '<span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>' : ''}
                                 </div>
                             </div>
                         `).join('')}
                     </div>
-                    <div class="p-3 border-t border-gray-100 text-center">
-                        <button class="text-sm text-purple-600 hover:text-purple-800 font-medium" onclick="markAllAsRead(); event.stopPropagation();">
-                            标记全部为已读
-                        </button>
-                    </div>
                 </div>
             ` : '';
 
-            // ========== 弹窗渲染 ==========
+            // 弹窗渲染
             const renderModal = () => {
                 if (!activeModal) return '';
 
                 if (activeModal === 'retrain') {
                     return `
                         <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
-                            <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl animate-fadeIn">
+                            <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl animate-fadeIn mx-4">
                                 <div class="flex items-start space-x-4">
                                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                                         <i class="fas fa-check-circle text-green-500 text-2xl"></i>
                                     </div>
                                     <div class="flex-1">
                                         <h3 class="text-lg font-bold text-gray-900 mb-2">当前模型已是最新版本</h3>
-                                        <p class="text-sm text-gray-600">InsightAI-v2.3 于今日03:00已自动完成训练，无需重新训练</p>
+                                        <p class="text-sm text-gray-600">InsightAI-v2.3 于今日03:00已自动完成训练</p>
                                         <div class="flex items-center mt-4 text-xs text-gray-400">
                                             <i class="far fa-clock mr-1"></i>
                                             <span>上次训练: 2024-03-06 03:00</span>
@@ -380,15 +695,14 @@
                     `;
                 }
 
-                // 消息详情弹窗
                 if (typeof activeModal === 'object') {
                     const m = activeModal;
                     return `
                         <div class="modal-overlay" onclick="if(event.target===this) closeModal()">
-                            <div class="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl animate-fadeIn">
+                            <div class="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl animate-fadeIn mx-4 max-h-[80vh] overflow-y-auto">
                                 <div class="flex justify-between items-start mb-4">
                                     <div class="flex items-center space-x-3">
-                                        <div class="w-10 h-10 ${m.type === 'alert' ? 'bg-red-100' : m.type === 'insight' ? 'bg-yellow-100' : m.type === 'competitor' ? 'bg-purple-100' : 'bg-blue-100'} rounded-full flex items-center justify-center">
+                                        <div class="w-10 h-10 ${m.type === 'alert' ? 'bg-red-100' : m.type === 'insight' ? 'bg-yellow-100' : m.type === 'competitor' ? 'bg-purple-100' : 'bg-blue-100'} rounded-full flex items-center justify-center flex-shrink-0">
                                             ${m.type === 'alert' ? '<i class="fas fa-exclamation-circle text-red-500"></i>' : 
                                               m.type === 'insight' ? '<i class="fas fa-lightbulb text-yellow-500"></i>' :
                                               m.type === 'competitor' ? '<i class="fas fa-chart-bar text-purple-500"></i>' :
@@ -410,11 +724,11 @@
                                 </div>
                                 
                                 ${m.actionable ? `
-                                <div class="mt-6 flex space-x-3">
+                                <div class="mt-6 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                                     <button class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all" onclick="alert('正在生成详细分析报告...');closeModal()">
                                         查看详细分析
                                     </button>
-                                    <button class="px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all" onclick="closeModal()">
+                                    <button class="flex-1 px-4 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all" onclick="closeModal()">
                                         关闭
                                     </button>
                                 </div>
@@ -432,61 +746,77 @@
                 return '';
             };
 
-            // ========== 趋势总览页面 ==========
+            // 移动端底部导航
+            const mobileBottomNav = `
+                <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-gray-100 z-30 mobile-nav-bar">
+                    <div class="flex justify-around items-center h-16">
+                        ${['趋势总览', '数据监测', '商业建议', '竞品追踪', '设置'].map(page => `
+                            <a href="#" data-page="${page}" class="flex flex-col items-center ${currentPage === page ? 'text-purple-600' : 'text-gray-500'}">
+                                <i class="fas fa-${page === '趋势总览' ? 'chart-line' : page === '数据监测' ? 'database' : page === '商业建议' ? 'lightbulb' : page === '竞品追踪' ? 'users' : 'cog'} text-lg"></i>
+                                <span class="text-[10px] mt-1">${page}</span>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            // 趋势总览页面
             const trendOverviewPage = `
-                <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 relative">
+                <div class="flex-1 flex flex-col h-full bg-gray-50 relative">
                     ${header}
                     ${notificationPanel}
-                    <main class="flex-1 overflow-y-auto p-8 custom-scroll">
-                        <!-- 欢迎 + 预测横幅 -->
-                        <div class="trend-gradient rounded-2xl p-8 text-white mb-8 shadow-xl">
-                            <div class="flex justify-between items-center">
+                    ${mobileSearch}
+                    ${mobileMenu}
+                    <main class="flex-1 overflow-y-auto px-4 md:px-8 pt-4 md:pt-8 pb-20 md:pb-8 custom-scroll" id="main-content">
+                        <!-- 欢迎横幅 -->
+                        <div class="trend-gradient rounded-xl md:rounded-2xl p-5 md:p-8 text-white mb-4 md:mb-8 shadow-xl">
+                            <div class="flex flex-col md:flex-row md:justify-between md:items-center">
                                 <div>
-                                    <span class="px-3 py-1 bg-white/20 rounded-full text-sm">🔥 AI实时预测 · 更新于 10分钟前</span>
-                                    <h2 class="text-3xl font-bold mt-4">未来消费趋势预测报告</h2>
-                                    <p class="text-white/80 mt-2 max-w-2xl">基于全网2.3亿条评论 + 社交声量 + 搜索趋势的AI大模型分析，以下预测置信度均 >85%</p>
+                                    <span class="px-2 py-1 md:px-3 md:py-1 bg-white/20 rounded-full text-xs md:text-sm">🔥 AI实时预测 · 10分钟前</span>
+                                    <h2 class="text-xl md:text-3xl font-bold mt-2 md:mt-4">未来消费趋势预测</h2>
+                                    <p class="text-white/80 mt-1 md:mt-2 text-xs md:text-sm">基于全网2.3亿条评论的AI分析</p>
                                 </div>
-                                <div class="text-right">
-                                    <div class="text-5xl font-black">92<span class="text-2xl">%</span></div>
-                                    <div class="text-sm text-white/80">整体预测准确率</div>
+                                <div class="flex items-center md:block mt-3 md:mt-0">
+                                    <div class="text-3xl md:text-5xl font-black mr-3 md:mr-0">92<span class="text-base md:text-2xl">%</span></div>
+                                    <div class="text-xs md:text-sm text-white/80">整体准确率</div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 未来趋势预测卡片 -->
-                        <div class="mb-8">
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-bold text-gray-900">🔮 AI预测 · 未来3-8个月爆发趋势</h2>
-                                <span class="text-sm text-purple-600 font-semibold">机会指数排名</span>
+                        <!-- 未来趋势 -->
+                        <div class="mb-4 md:mb-8">
+                            <div class="flex items-center justify-between mb-3 md:mb-4">
+                                <h2 class="text-base md:text-xl font-bold text-gray-900">🔮 AI预测 · 未来3-8个月</h2>
+                                <span class="text-xs md:text-sm text-purple-600 font-semibold">机会指数</span>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-6">
                                 ${trendPredictions.futureTrends.map(t => `
-                                    <div class="bg-white rounded-2xl shadow-lg p-6 hover-lift transition-all border-l-4 border-purple-500">
+                                    <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 hover-lift transition-all border-l-4 border-purple-500">
                                         <div class="flex justify-between items-start">
                                             <div>
-                                                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">${t.timeHorizon}</span>
-                                                <h3 class="text-lg font-bold text-gray-900 mt-3">${t.trend}</h3>
+                                                <span class="px-2 py-0.5 md:px-3 md:py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">${t.timeHorizon}</span>
+                                                <h3 class="text-sm md:text-lg font-bold text-gray-900 mt-2">${t.trend}</h3>
                                             </div>
                                             <div class="text-right">
-                                                <div class="text-2xl font-black text-purple-600">${t.opportunityScore}</div>
-                                                <div class="text-xs text-gray-400">机会指数</div>
+                                                <div class="text-xl md:text-2xl font-black text-purple-600">${t.opportunityScore}</div>
+                                                <div class="text-[10px] md:text-xs text-gray-400">机会指数</div>
                                             </div>
                                         </div>
-                                        <p class="text-sm text-gray-600 mt-2">${t.description}</p>
+                                        <p class="text-xs md:text-sm text-gray-600 mt-2">${t.description}</p>
                                         
-                                        <div class="mt-4">
-                                            <div class="flex justify-between text-xs mb-1">
-                                                <span class="text-gray-500">预测置信度</span>
+                                        <div class="mt-3">
+                                            <div class="flex justify-between text-[10px] md:text-xs mb-1">
+                                                <span class="text-gray-500">置信度</span>
                                                 <span class="font-bold text-purple-700">${t.confidence}%</span>
                                             </div>
-                                            <div class="w-full bg-gray-100 rounded-full h-2">
-                                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: ${t.confidence}%"></div>
+                                            <div class="w-full bg-gray-100 rounded-full h-1.5 md:h-2">
+                                                <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 md:h-2 rounded-full" style="width: ${t.confidence}%"></div>
                                             </div>
                                         </div>
                                         
-                                        <div class="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                                            <div class="text-xs font-semibold text-blue-700 mb-1">💡 建议行动</div>
-                                            <div class="text-sm text-gray-800">${t.action}</div>
+                                        <div class="mt-3 p-2 md:p-3 bg-blue-50 rounded-lg border border-blue-100">
+                                            <div class="text-[10px] md:text-xs font-semibold text-blue-700 mb-1">💡 建议行动</div>
+                                            <div class="text-xs md:text-sm text-gray-800">${t.action}</div>
                                         </div>
                                     </div>
                                 `).join('')}
@@ -494,307 +824,296 @@
                         </div>
 
                         <!-- 当前热点趋势 -->
-                        <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
-                            <h2 class="text-xl font-bold text-gray-900 mb-4">📊 当前正在爆发 · 实时监测热点</h2>
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="text-left text-xs font-semibold text-gray-400 uppercase">
-                                        <th class="pb-3">趋势词</th>
-                                        <th class="pb-3">增长动量</th>
-                                        <th class="pb-3">声量</th>
-                                        <th class="pb-3">情感</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${trendPredictions.currentHotTrends.map(t => `
-                                        <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                            <td class="py-4 px-4">
-                                                <div class="font-semibold text-gray-900">${t.trend}</div>
-                                            </td>
-                                            <td class="py-4">
-                                                <div class="flex items-center">
-                                                    <span class="text-sm font-bold text-green-600 mr-2">${t.momentum}</span>
-                                                    <div class="w-16 bg-gray-200 rounded-full h-2">
-                                                        <div class="bg-green-500 h-2 rounded-full" style="width: ${t.momentum}%"></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="py-4 text-sm text-gray-600">${t.volume}</td>
-                                            <td class="py-4">
-                                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">${t.sentiment}% 正向</span>
-                                            </td>
+                        <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 mb-4 md:mb-8">
+                            <h2 class="text-base md:text-xl font-bold text-gray-900 mb-3 md:mb-4">📊 当前实时热点</h2>
+                            <div class="table-responsive">
+                                <table class="w-full min-w-[500px]">
+                                    <thead>
+                                        <tr class="text-left text-[10px] md:text-xs font-semibold text-gray-400 uppercase">
+                                            <th class="pb-2 md:pb-3">趋势词</th>
+                                            <th class="pb-2 md:pb-3">增长动量</th>
+                                            <th class="pb-2 md:pb-3">声量</th>
+                                            <th class="pb-2 md:pb-3">情感</th>
                                         </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        ${trendPredictions.currentHotTrends.map(t => `
+                                            <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                                <td class="py-2 md:py-4 px-2 md:px-4">
+                                                    <div class="font-semibold text-gray-900 text-xs md:text-sm">${t.trend}</div>
+                                                </td>
+                                                <td class="py-2 md:py-4">
+                                                    <div class="flex items-center">
+                                                        <span class="text-xs md:text-sm font-bold text-green-600 mr-2">${t.momentum}</span>
+                                                        <div class="w-12 md:w-16 bg-gray-200 rounded-full h-1.5 md:h-2">
+                                                            <div class="bg-green-500 h-1.5 md:h-2 rounded-full" style="width: ${t.momentum}%"></div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="py-2 md:py-4 text-xs md:text-sm text-gray-600">${t.volume}</td>
+                                                <td class="py-2 md:py-4">
+                                                    <span class="px-1.5 py-0.5 md:px-2 md:py-1 bg-green-100 text-green-700 rounded-full text-[10px] md:text-xs">${t.sentiment}%</span>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
-                        <!-- 实时佐证评论流 -->
-                        <div class="bg-white rounded-2xl shadow-lg p-6">
-                            <h2 class="text-xl font-bold text-gray-900 mb-4">📝 实时佐证 · 消费者声音</h2>
-                            <div class="space-y-4">
+                        <!-- 实时评论 -->
+                        <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                            <h2 class="text-base md:text-xl font-bold text-gray-900 mb-3 md:mb-4">📝 消费者声音</h2>
+                            <div class="space-y-3 md:space-y-4">
                                 ${recentReviews.map(r => `
-                                    <div class="flex items-start space-x-3 border-b border-gray-100 pb-4 last:border-0">
-                                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                                            <i class="fas fa-comment text-purple-500 text-sm"></i>
+                                    <div class="flex items-start space-x-2 md:space-x-3 border-b border-gray-100 pb-3 last:border-0">
+                                        <div class="w-6 h-6 md:w-8 md:h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-comment text-purple-500 text-xs md:text-sm"></i>
                                         </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center space-x-2">
-                                                <span class="text-sm font-semibold text-gray-800">${r.platform}</span>
-                                                <span class="text-xs text-gray-400">${r.time}</span>
-                                                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full text-xs">趋势: ${r.trend}</span>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-center space-x-1 md:space-x-2 flex-wrap">
+                                                <span class="text-xs md:text-sm font-semibold text-gray-800">${r.platform}</span>
+                                                <span class="text-[10px] md:text-xs text-gray-400">${r.time}</span>
+                                                <span class="px-1.5 py-0.5 bg-purple-50 text-purple-600 rounded-full text-[8px] md:text-xs">#${r.trend}</span>
                                             </div>
-                                            <p class="text-sm text-gray-700 mt-1">${r.content}</p>
+                                            <p class="text-xs md:text-sm text-gray-700 mt-1 line-clamp-2">${r.content}</p>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
                     </main>
+                    ${mobileBottomNav}
                 </div>
             `;
 
-            // ========== 数据监测页面 ==========
+            // 数据监测页面
             const dataMonitoringPage = `
-                <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 relative">
+                <div class="flex-1 flex flex-col h-full bg-gray-50 relative">
                     ${header}
                     ${notificationPanel}
-                    <main class="flex-1 overflow-y-auto p-8 custom-scroll">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">📊 实时数据监测</h2>
+                    ${mobileSearch}
+                    ${mobileMenu}
+                    <main class="flex-1 overflow-y-auto px-4 md:px-8 pt-4 md:pt-8 pb-20 md:pb-8 custom-scroll">
+                        <h2 class="text-lg md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">📊 实时数据监测</h2>
                         
-                        <!-- 核心指标卡片 -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                            <div class="bg-white rounded-2xl shadow-lg p-6">
-                                <div class="text-sm text-gray-500 mb-1">全网总声量</div>
-                                <div class="text-3xl font-bold text-gray-900">${trendPredictions.monitoringData.totalMentions}</div>
+                        <!-- 核心指标 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 mb-4 md:mb-8">
+                            <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                                <div class="text-xs md:text-sm text-gray-500 mb-1">全网总声量</div>
+                                <div class="text-xl md:text-3xl font-bold text-gray-900">${trendPredictions.monitoringData.totalMentions}</div>
                                 <div class="flex items-center mt-2 text-green-600">
-                                    <i class="fas fa-arrow-up text-xs mr-1"></i>
-                                    <span class="text-sm font-medium">${trendPredictions.monitoringData.growthRate}</span>
-                                    <span class="text-xs text-gray-400 ml-1">vs 昨日</span>
+                                    <i class="fas fa-arrow-up text-[10px] md:text-xs mr-1"></i>
+                                    <span class="text-xs md:text-sm font-medium">${trendPredictions.monitoringData.growthRate}</span>
                                 </div>
                             </div>
-                            <div class="bg-white rounded-2xl shadow-lg p-6">
-                                <div class="text-sm text-gray-500 mb-1">活跃平台</div>
-                                <div class="space-y-2 mt-2">
+                            <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                                <div class="text-xs md:text-sm text-gray-500 mb-1">活跃平台</div>
+                                <div class="space-y-2">
                                     ${trendPredictions.monitoringData.topChannels.map(c => `
                                         <div class="flex items-center">
-                                            <span class="text-sm text-gray-700 w-24">${c.split(' ')[0]}</span>
-                                            <div class="flex-1 bg-gray-100 rounded-full h-2">
-                                                <div class="bg-purple-500 h-2 rounded-full" style="width: ${c.split(' ')[1].replace('%','')}%"></div>
+                                            <span class="text-[10px] md:text-xs text-gray-700 w-16 md:w-24">${c.split(' ')[0]}</span>
+                                            <div class="flex-1 bg-gray-100 rounded-full h-1.5 md:h-2">
+                                                <div class="bg-purple-500 h-1.5 md:h-2 rounded-full" style="width: ${c.split(' ')[1].replace('%','')}%"></div>
                                             </div>
-                                            <span class="text-xs text-gray-500 ml-2">${c.split(' ')[1]}</span>
+                                            <span class="text-[8px] md:text-xs text-gray-500 ml-1 md:ml-2">${c.split(' ')[1]}</span>
                                         </div>
                                     `).join('')}
                                 </div>
                             </div>
-                            <div class="bg-white rounded-2xl shadow-lg p-6">
-                                <div class="text-sm text-gray-500 mb-1">热门关键词</div>
-                                <div class="flex flex-wrap gap-2 mt-2">
+                            <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                                <div class="text-xs md:text-sm text-gray-500 mb-1">热门关键词</div>
+                                <div class="flex flex-wrap gap-1 md:gap-2">
                                     ${trendPredictions.monitoringData.topKeywords.map(k => `
-                                        <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">${k}</span>
+                                        <span class="px-2 py-1 md:px-3 md:py-1 bg-purple-100 text-purple-700 rounded-full text-[10px] md:text-sm">${k}</span>
                                     `).join('')}
                                 </div>
                             </div>
                         </div>
 
                         <!-- 实时警报 -->
-                        <div class="bg-white rounded-2xl shadow-lg p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">🚨 AI实时警报</h3>
-                            <div class="space-y-3">
+                        <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                            <h3 class="text-sm md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">🚨 AI实时警报</h3>
+                            <div class="space-y-2 md:space-y-3">
                                 ${trendPredictions.monitoringData.alerts.map(a => `
-                                    <div class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-xl border border-yellow-100">
-                                        <i class="fas fa-exclamation-triangle text-yellow-500 mt-0.5"></i>
+                                    <div class="flex items-start space-x-2 md:space-x-3 p-2 md:p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+                                        <i class="fas fa-exclamation-triangle text-yellow-500 text-xs md:text-sm mt-0.5"></i>
                                         <div>
-                                            <span class="text-xs text-gray-400">${a.time}</span>
-                                            <p class="text-sm text-gray-800">${a.content}</p>
+                                            <span class="text-[10px] md:text-xs text-gray-400">${a.time}</span>
+                                            <p class="text-xs md:text-sm text-gray-800">${a.content}</p>
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
                     </main>
+                    ${mobileBottomNav}
                 </div>
             `;
 
-            // ========== 商业建议页面 ==========
+            // 商业建议页面
             const businessAdvicePage = `
-                <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 relative">
+                <div class="flex-1 flex flex-col h-full bg-gray-50 relative">
                     ${header}
                     ${notificationPanel}
-                    <main class="flex-1 overflow-y-auto p-8 custom-scroll">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">💎 正大专属商业建议</h2>
+                    ${mobileSearch}
+                    ${mobileMenu}
+                    <main class="flex-1 overflow-y-auto px-4 md:px-8 pt-4 md:pt-8 pb-20 md:pb-8 custom-scroll">
+                        <h2 class="text-lg md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">💎 商业建议</h2>
                         
-                        <!-- 优先级说明 -->
-                        <div class="flex space-x-4 mb-6">
-                            <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">P0 · 立即执行</span>
-                            <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">P1 · 本周内启动</span>
-                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">P2 · 规划中</span>
+                        <!-- 优先级标签 -->
+                        <div class="flex flex-wrap gap-2 mb-4 md:mb-6">
+                            <span class="px-2 py-1 md:px-3 md:py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">P0 · 立即执行</span>
+                            <span class="px-2 py-1 md:px-3 md:py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-semibold">P1 · 本周启动</span>
+                            <span class="px-2 py-1 md:px-3 md:py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">P2 · 规划中</span>
                         </div>
 
                         <!-- 建议卡片 -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                             ${trendPredictions.brandAdvice.map(a => `
-                                <div class="bg-white rounded-2xl shadow-lg p-6 border-l-4 ${a.priority === 'P0' ? 'border-red-500' : a.priority === 'P1' ? 'border-yellow-500' : 'border-blue-500'}">
+                                <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 border-l-4 ${a.priority === 'P0' ? 'border-red-500' : a.priority === 'P1' ? 'border-yellow-500' : 'border-blue-500'}">
                                     <div class="flex justify-between items-start">
-                                        <span class="px-3 py-1 ${a.priority === 'P0' ? 'bg-red-100 text-red-700' : a.priority === 'P1' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'} rounded-full text-xs font-semibold">${a.priority}</span>
-                                        <span class="text-sm font-medium text-green-600">ROI: ${a.roi}</span>
+                                        <span class="px-2 py-0.5 md:px-3 md:py-1 ${a.priority === 'P0' ? 'bg-red-100 text-red-700' : a.priority === 'P1' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'} rounded-full text-xs font-semibold">${a.priority}</span>
+                                        <span class="text-xs md:text-sm font-medium text-green-600">ROI: ${a.roi}</span>
                                     </div>
-                                    <div class="mt-3">
-                                        <span class="text-xs text-gray-400">${a.category}</span>
-                                        <p class="text-base font-medium text-gray-900 mt-1">${a.advice}</p>
+                                    <div class="mt-2 md:mt-3">
+                                        <span class="text-[10px] md:text-xs text-gray-400">${a.category}</span>
+                                        <p class="text-xs md:text-base font-medium text-gray-900 mt-1">${a.advice}</p>
                                     </div>
-                                    <button class="mt-4 text-sm text-purple-600 hover:text-purple-800 font-medium">查看详细分析 →</button>
                                 </div>
                             `).join('')}
                         </div>
                     </main>
+                    ${mobileBottomNav}
                 </div>
             `;
 
-            // ========== 竞品追踪页面 ==========
+            // 竞品追踪页面
             const competitorPage = `
-                <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 relative">
+                <div class="flex-1 flex flex-col h-full bg-gray-50 relative">
                     ${header}
                     ${notificationPanel}
-                    <main class="flex-1 overflow-y-auto p-8 custom-scroll">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">📊 竞品动态追踪</h2>
+                    ${mobileSearch}
+                    ${mobileMenu}
+                    <main class="flex-1 overflow-y-auto px-4 md:px-8 pt-4 md:pt-8 pb-20 md:pb-8 custom-scroll">
+                        <h2 class="text-lg md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">📊 竞品追踪</h2>
                         
-                        <!-- 市场份额卡片 -->
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                        <!-- 市场份额 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-4 md:mb-8 competitor-grid">
                             ${trendPredictions.competitorData.map(c => `
-                                <div class="bg-white rounded-2xl shadow-lg p-6 ${c.name === '正大食品' ? 'border-2 border-purple-500' : ''}">
+                                <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 ${c.name === '正大食品' ? 'border-2 border-purple-500' : ''}">
                                     <div class="flex justify-between items-start">
-                                        <h3 class="text-lg font-semibold text-gray-900">${c.name}</h3>
-                                        ${c.name === '正大食品' ? '<span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">本品牌</span>' : ''}
+                                        <h3 class="text-sm md:text-lg font-semibold text-gray-900">${c.name}</h3>
+                                        ${c.name === '正大食品' ? '<span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded-full text-[8px] md:text-xs">本品牌</span>' : ''}
                                     </div>
-                                    <div class="mt-4">
-                                        <div class="text-2xl font-bold text-gray-900">${c.share}</div>
+                                    <div class="mt-2 md:mt-4">
+                                        <div class="text-lg md:text-2xl font-bold text-gray-900">${c.share}</div>
                                         <div class="flex items-center mt-1 ${c.yoy.includes('+') ? 'text-green-600' : 'text-red-600'}">
-                                            <i class="fas fa-arrow-${c.yoy.includes('+') ? 'up' : 'down'} text-xs mr-1"></i>
-                                            <span class="text-sm">${c.yoy}</span>
+                                            <i class="fas fa-arrow-${c.yoy.includes('+') ? 'up' : 'down'} text-[10px] md:text-xs mr-1"></i>
+                                            <span class="text-xs md:text-sm">${c.yoy}</span>
                                         </div>
                                     </div>
-                                    <div class="mt-4 pt-4 border-t border-gray-100">
-                                        <div class="text-sm"><span class="text-gray-500">爆品:</span> ${c.hotProduct}</div>
-                                        <div class="text-sm mt-1"><span class="text-gray-500">优势:</span> ${c.strength}</div>
-                                        <div class="text-sm mt-1"><span class="text-gray-500">劣势:</span> ${c.weakness}</div>
+                                    <div class="mt-2 md:mt-4 pt-2 md:pt-4 border-t border-gray-100">
+                                        <div class="text-[10px] md:text-sm"><span class="text-gray-500">爆品:</span> ${c.hotProduct}</div>
+                                        <div class="text-[10px] md:text-sm mt-0.5"><span class="text-gray-500">优势:</span> ${c.strength}</div>
+                                        <div class="text-[10px] md:text-sm mt-0.5"><span class="text-gray-500">劣势:</span> ${c.weakness}</div>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
 
-                        <!-- 竞品动向分析 -->
-                        <div class="bg-white rounded-2xl shadow-lg p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">🎯 竞品最新动向</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-xl">
-                                    <i class="fas fa-bullhorn text-orange-500 mt-0.5"></i>
+                        <!-- 竞品动向 -->
+                        <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                            <h3 class="text-sm md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">🎯 最新动向</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-2 md:space-x-3 p-2 md:p-3 bg-gray-50 rounded-lg">
+                                    <i class="fas fa-bullhorn text-orange-500 text-xs md:text-sm mt-0.5"></i>
                                     <div>
-                                        <span class="text-sm font-semibold text-gray-900">安井食品 · 3月6日</span>
-                                        <p class="text-sm text-gray-600 mt-1">推出"低脂虾滑"系列，主打健身人群，首日销量破万</p>
+                                        <span class="text-xs md:text-sm font-semibold text-gray-900">安井食品 · 3月6日</span>
+                                        <p class="text-[10px] md:text-sm text-gray-600 mt-1">推出"低脂虾滑"系列，首日销量破万</p>
                                     </div>
                                 </div>
-                                <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-xl">
-                                    <i class="fas fa-chart-line text-blue-500 mt-0.5"></i>
+                                <div class="flex items-start space-x-2 md:space-x-3 p-2 md:p-3 bg-gray-50 rounded-lg">
+                                    <i class="fas fa-chart-line text-blue-500 text-xs md:text-sm mt-0.5"></i>
                                     <div>
-                                        <span class="text-sm font-semibold text-gray-900">三全食品 · 3月5日</span>
-                                        <p class="text-sm text-gray-600 mt-1">"私厨水饺"系列在抖音投放效果显著，年轻用户占比提升15%</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start space-x-3 p-3 bg-gray-50 rounded-xl">
-                                    <i class="fas fa-tag text-green-500 mt-0.5"></i>
-                                    <div>
-                                        <span class="text-sm font-semibold text-gray-900">思念食品 · 3月4日</span>
-                                        <p class="text-sm text-gray-600 mt-1">与盒马联名"地域早餐"系列，已在华东地区上线</p>
+                                        <span class="text-xs md:text-sm font-semibold text-gray-900">三全食品 · 3月5日</span>
+                                        <p class="text-[10px] md:text-sm text-gray-600 mt-1">"私厨水饺"抖音投放，年轻用户+15%</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </main>
+                    ${mobileBottomNav}
                 </div>
             `;
 
-            // ========== 设置页面 ==========
+            // 设置页面
             const settingsPage = `
-                <div class="flex-1 flex flex-col overflow-hidden bg-gray-50 relative">
+                <div class="flex-1 flex flex-col h-full bg-gray-50 relative">
                     ${header}
                     ${notificationPanel}
-                    <main class="flex-1 overflow-y-auto p-8 custom-scroll">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">⚙️ 系统设置</h2>
+                    ${mobileSearch}
+                    ${mobileMenu}
+                    <main class="flex-1 overflow-y-auto px-4 md:px-8 pt-4 md:pt-8 pb-20 md:pb-8 custom-scroll">
+                        <h2 class="text-lg md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">⚙️ 设置</h2>
                         
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <!-- 基础设置 -->
-                            <div class="bg-white rounded-2xl shadow-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">基础配置</h3>
-                                <div class="space-y-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+                            <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                                <h3 class="text-sm md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">基础配置</h3>
+                                <div class="space-y-3 md:space-y-4">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-700">通知提醒</span>
+                                        <span class="text-xs md:text-sm text-gray-700">通知提醒</span>
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" class="sr-only peer" ${trendPredictions.settings.notifications ? 'checked' : ''}>
-                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                            <div class="w-9 h-5 md:w-11 md:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 md:after:h-5 md:after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
                                         </label>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-700">自动刷新</span>
+                                        <span class="text-xs md:text-sm text-gray-700">自动刷新</span>
                                         <label class="relative inline-flex items-center cursor-pointer">
                                             <input type="checkbox" class="sr-only peer" ${trendPredictions.settings.autoRefresh ? 'checked' : ''}>
-                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                            <div class="w-9 h-5 md:w-11 md:h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 md:after:h-5 md:after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
                                         </label>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-700">刷新间隔</span>
-                                        <select class="px-3 py-1 border border-gray-200 rounded-lg text-sm">
-                                            <option ${trendPredictions.settings.refreshInterval === '15分钟' ? 'selected' : ''}>15分钟</option>
-                                            <option ${trendPredictions.settings.refreshInterval === '30分钟' ? 'selected' : ''} selected>30分钟</option>
-                                            <option ${trendPredictions.settings.refreshInterval === '1小时' ? 'selected' : ''}>1小时</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- 数据源设置 -->
-                            <div class="bg-white rounded-2xl shadow-lg p-6">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">数据源管理</h3>
-                                <div class="space-y-3">
+                            <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6">
+                                <h3 class="text-sm md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">数据源</h3>
+                                <div class="space-y-2">
                                     ${trendPredictions.settings.dataSources.map(ds => `
                                         <div class="flex items-center">
                                             <input type="checkbox" class="rounded text-purple-600" checked>
-                                            <span class="ml-3 text-sm text-gray-700">${ds}</span>
-                                            <span class="ml-auto text-xs text-green-600">● 活跃</span>
+                                            <span class="ml-2 md:ml-3 text-xs md:text-sm text-gray-700">${ds}</span>
+                                            <span class="ml-auto text-[8px] md:text-xs text-green-600">● 活跃</span>
                                         </div>
                                     `).join('')}
                                 </div>
                             </div>
 
-                            <!-- 模型信息 -->
-                            <div class="bg-white rounded-2xl shadow-lg p-6 lg:col-span-2">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">AI模型信息</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white rounded-xl md:rounded-2xl shadow-lg p-4 md:p-6 lg:col-span-2">
+                                <h3 class="text-sm md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">AI模型信息</h3>
+                                <div class="grid grid-cols-2 gap-3 md:gap-4">
                                     <div>
-                                        <span class="text-sm text-gray-500">当前模型版本</span>
-                                        <p class="text-lg font-semibold text-gray-900">${trendPredictions.settings.predictionModel}</p>
+                                        <span class="text-[10px] md:text-sm text-gray-500">当前版本</span>
+                                        <p class="text-xs md:text-lg font-semibold text-gray-900">${trendPredictions.settings.predictionModel}</p>
                                     </div>
                                     <div>
-                                        <span class="text-sm text-gray-500">最后训练时间</span>
-                                        <p class="text-lg font-semibold text-gray-900">${trendPredictions.settings.lastTraining}</p>
-                                    </div>
-                                    <div>
-                                        <span class="text-sm text-gray-500">训练数据量</span>
-                                        <p class="text-lg font-semibold text-gray-900">2.3亿条评论</p>
-                                    </div>
-                                    <div>
-                                        <span class="text-sm text-gray-500">预测准确率</span>
-                                        <p class="text-lg font-semibold text-green-600">92.3%</p>
+                                        <span class="text-[10px] md:text-sm text-gray-500">最后训练</span>
+                                        <p class="text-xs md:text-lg font-semibold text-gray-900">${trendPredictions.settings.lastTraining}</p>
                                     </div>
                                 </div>
-                                <button class="mt-4 px-4 py-2 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-all" onclick="showRetrainMessage()">立即重新训练</button>
+                                <button class="mt-3 md:mt-4 w-full md:w-auto px-3 py-2 md:px-4 md:py-2 bg-purple-600 text-white rounded-lg md:rounded-xl text-xs md:text-sm hover:bg-purple-700 transition-all" onclick="showRetrainMessage()">
+                                    立即重新训练
+                                </button>
                             </div>
                         </div>
                     </main>
+                    ${mobileBottomNav}
                 </div>
             `;
 
-            // 根据当前页面选择内容
+            // 选择页面
             let pageContent = trendOverviewPage;
             if (currentPage === '数据监测') pageContent = dataMonitoringPage;
             if (currentPage === '商业建议') pageContent = businessAdvicePage;
@@ -802,17 +1121,29 @@
             if (currentPage === '设置') pageContent = settingsPage;
 
             // 最终渲染
-            root.innerHTML = `<div class="flex h-full w-full">${sidebar}${pageContent}</div>${renderModal()}`;
+            root.innerHTML = `
+                <div class="flex h-full w-full">
+                    ${desktopSidebar}
+                    ${pageContent}
+                </div>
+                ${renderModal()}
+            `;
 
-            // 绑定导航点击事件
-            document.querySelectorAll('.nav-item').forEach(item => {
+            // 绑定事件
+            bindEvents();
+        }
+
+        // 绑定事件
+        function bindEvents() {
+            // 导航点击
+            document.querySelectorAll('[data-page]').forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
                     changePage(item.dataset.page);
                 });
             });
 
-            // 绑定通知按钮点击事件
+            // 通知按钮
             const notifBtn = document.getElementById('notification-btn');
             if (notifBtn) {
                 notifBtn.addEventListener('click', (e) => {
@@ -822,169 +1153,63 @@
                 });
             }
 
-            // 点击其他地方关闭通知面板
+            // 关闭通知面板
             document.addEventListener('click', (e) => {
                 if (showNotifications && !e.target.closest('#notification-panel') && !e.target.closest('#notification-btn')) {
                     showNotifications = false;
                     render();
                 }
             });
-        }
 
-        // ==================== AI模型API对接 ====================
-        const AI_CONFIG = {
-            API_URL: 'http://localhost:8000/api/chat',
-            MODEL_NAME: 'InsightAI-灵曦-v1',
-            API_KEY: 'your-api-key-here'
-        };
-
-        let isAIThinking = false;
-
-        function initAISearch() {
-            const searchInput = document.querySelector('input[placeholder*="搜索"]');
-            if (!searchInput) return;
-            
-            searchInput.placeholder = '输入问题，灵曦AI为你分析市场趋势...';
-            
-            searchInput.addEventListener('keydown', async (e) => {
-                if (e.key === 'Enter' && !isAIThinking) {
-                    const question = searchInput.value.trim();
-                    if (question) {
-                        await handleAIQuery(question);
+            // 桌面搜索
+            const desktopSearch = document.getElementById('desktop-search');
+            if (desktopSearch) {
+                desktopSearch.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && desktopSearch.value.trim()) {
+                        alert('搜索功能开发中: ' + desktopSearch.value);
                     }
-                }
-            });
-            
-            const searchWrapper = searchInput.parentElement;
-            if (searchWrapper && !document.querySelector('.ai-magic-btn')) {
-                const aiButton = document.createElement('button');
-                aiButton.className = 'ai-magic-btn absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-500 hover:text-purple-700';
-                aiButton.innerHTML = '<i class="fas fa-magic"></i>';
-                aiButton.onclick = async () => {
-                    const question = searchInput.value.trim();
-                    if (question && !isAIThinking) {
-                        await handleAIQuery(question);
+                });
+            }
+
+            // 移动搜索
+            const mobileSearchInput = document.getElementById('mobile-search-input');
+            if (mobileSearchInput) {
+                mobileSearchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && mobileSearchInput.value.trim()) {
+                        alert('搜索功能开发中: ' + mobileSearchInput.value);
+                        toggleMobileSearch();
                     }
-                };
-                searchWrapper.appendChild(aiButton);
+                });
             }
         }
 
-        async function handleAIQuery(question) {
-            isAIThinking = true;
-            showAIThinking(question);
-            
-            try {
-                setTimeout(() => {
-                    const mockResponse = {
-                        answer: `关于"${question}"的分析：\n\n根据最新市场数据，这个趋势增长强劲，建议重点关注。具体来说：\n- 市场声量增长32%\n- 正面情感占比89%\n- 主要竞品尚未布局\n\n建议立即立项跟进，抢占先发优势。`,
-                        confidence: '92%',
-                        sources: '全网实时数据',
-                        time: '2.3s'
-                    };
-                    showAIResponse(mockResponse);
-                    isAIThinking = false;
-                }, 2000);
-            } catch (error) {
-                console.error('AI出错:', error);
-                showAIError(error);
-                isAIThinking = false;
-            }
-        }
-
-        function showAIThinking(question) {
-            const thinkingDiv = document.createElement('div');
-            thinkingDiv.id = 'ai-thinking';
-            thinkingDiv.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
-            thinkingDiv.innerHTML = `
-                <div class="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
-                    <div class="flex items-center space-x-4 mb-4">
-                        <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                            <span class="text-white text-xl font-bold">曦</span>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">灵曦AI · 思考中</h3>
-                            <p class="text-sm text-gray-500">正在分析市场数据...</p>
-                        </div>
-                    </div>
-                    <div class="mb-4 p-4 bg-gray-50 rounded-xl">
-                        <p class="text-sm text-gray-700">"${question}"</p>
-                    </div>
-                    <div class="flex justify-center space-x-2">
-                        <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
-                        <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                        <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(thinkingDiv);
-        }
-
-        function showAIResponse(data) {
-            const thinkingDiv = document.getElementById('ai-thinking');
-            if (thinkingDiv) thinkingDiv.remove();
-            
-            const responseDiv = document.createElement('div');
-            responseDiv.id = 'ai-response';
-            responseDiv.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50';
-            
-            const answerText = data.answer || data.response || '暂无回答';
-            const formattedAnswer = answerText.split('\n').map(line => {
-                if (line.startsWith('-')) return `<li class="ml-4 text-gray-700">${line.substring(1)}</li>`;
-                return line ? `<p class="text-gray-700 mb-2">${line}</p>` : '';
-            }).join('');
-            
-            responseDiv.innerHTML = `
-                <div class="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                                <span class="text-white font-bold">曦</span>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-gray-900">灵曦AI · 洞察</h3>
-                                <span class="text-xs text-green-600">基于实时数据分析</span>
-                            </div>
-                        </div>
-                        <button onclick="this.closest('#ai-response').remove()" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="prose max-w-none">
-                        ${formattedAnswer}
-                    </div>
-                    
-                    <div class="mt-6 pt-4 border-t border-gray-100">
-                        <div class="flex items-center justify-between text-sm text-gray-500">
-                            <span>置信度: ${data.confidence || '92%'}</span>
-                            <span>数据来源: ${data.sources || '全网实时数据'}</span>
-                            <span>分析耗时: ${data.time || '2.3s'}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(responseDiv);
-        }
-
-        function showAIError(error) {
-            const thinkingDiv = document.getElementById('ai-thinking');
-            if (thinkingDiv) thinkingDiv.remove();
-            alert('灵曦AI暂时无法响应，请稍后再试。');
-        }
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(initAISearch, 500);
-        });
-
-        window.onload = render;
-        
-        // 将函数暴露到全局
+        // 暴露全局函数
         window.markAllAsRead = markAllAsRead;
         window.showRetrainMessage = showRetrainMessage;
         window.viewMessageDetail = viewMessageDetail;
         window.closeModal = closeModal;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleMobileSearch = toggleMobileSearch;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
+
+        window.onload = render;
+
+        // 监听窗口大小变化
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (window.innerWidth >= 768) {
+                    showMobileMenu = false;
+                    showMobileSearch = false;
+                    render();
+                }
+            }, 250);
+        });
     })();
 </script>
 </body>
